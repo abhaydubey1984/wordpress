@@ -34,9 +34,14 @@ get_header(); ?>
 						'next_text' => '<span class="screen-reader-text">' . __( 'Next Post', 'twentyseventeen' ) . '</span><span aria-hidden="true" class="nav-subtitle">' . __( 'Next', 'twentyseventeen' ) . '</span> <span class="nav-title">%title<span class="nav-title-icon-wrapper">' . twentyseventeen_get_svg( array( 'icon' => 'arrow-right' ) ) . '</span></span>',
 					) );
 					$meta = get_post_meta($post->ID, 'price', true );
+					$color = get_post_meta($post->ID, 'color', true );
 					if($meta!='')
 					{
-						echo "Price of Product :".$meta;
+						echo "Price of Product :".$meta."</br>";
+					}
+					if($color!='')
+					{
+						echo "Color :".$color;
 					}
 				endwhile; // End of the loop.
 			?>

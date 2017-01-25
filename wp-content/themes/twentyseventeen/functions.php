@@ -703,6 +703,9 @@ add_action( 'load-post.php', 'smashing_post_meta_boxes_setup' );
 add_action( 'load-post-new.php', 'smashing_post_meta_boxes_setup' );
 function smashing_add_post_meta_boxes() {
   add_meta_box("postcustom", "price", "smashing_post_class_meta_box", "product1", "side", "high", null);
+  add_meta_box("postcustom", "color", "smashing_post_class_meta_box", "product1", "side", "high", null);
+
+
 }
 function smashing_post_class_meta_box($object,$box){
 	wp_nonce_field( basename( __FILE__ ), 'smashing_post_class_nonce' );
@@ -710,6 +713,10 @@ function smashing_post_class_meta_box($object,$box){
 	<p>
 	<label for="smashing-post-class"><?php _e( "Add Price of Product :", 'example' ); ?></label>
 	<input class="widefat" type="text" name="smashing-post-class" id="smashing-post-class" value="<?php echo esc_attr( get_post_meta( $object->ID, 'price', true ) ); ?>"/>
+	</p>
+		<p>
+	<label for="smashing-post-class"><?php _e( "Add Color of Product :", 'example' ); ?></label>
+	<input class="widefat" type="text" name="color" id="color" value="<?php echo esc_attr( get_post_meta( $object->ID, 'color', true ) ); ?>"/>
 	</p>
 	<?php
 
@@ -727,12 +734,24 @@ function smashing_post_class_meta_box($object,$box){
     	$new_meta_value = ( isset( $_POST['smashing-post-class'] ) ? sanitize_html_class( $_POST['smashing-post-class'] ) : '' );
     	$meta_key = 'price';
     	$meta_value = get_post_meta( $post_id, $meta_key, true );
+    	$new_meta_value1 = ( isset( $_POST['color'] ) ? sanitize_html_class( $_POST['color'] ) : '' );
+    	$meta_key1 = 'color';
+    	$meta_value = get_post_meta( $post_id, $meta_key1, true );
     	if ( $new_meta_value && '' == $meta_value )
+    	{
         add_post_meta( $post_id, $meta_key, $new_meta_value, true );
+    	add_post_meta( $post_id, $meta_key1, $new_meta_value1, true );
+    	}
     	elseif ( $new_meta_value && $new_meta_value != $meta_value )
+    	{
     	update_post_meta( $post_id, $meta_key, $new_meta_value );
+    	update_post_meta( $post_id, $meta_key1, $new_meta_value1 );
+    	}
   		elseif ( '' == $new_meta_value && $meta_value )
+  		{
     	delete_post_meta( $post_id, $meta_key, $meta_value );
+    	delete_post_meta( $post_id, $meta_key1, $meta_value1 );
+    	}
 
 	}
 ?>

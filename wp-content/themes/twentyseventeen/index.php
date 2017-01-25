@@ -95,6 +95,7 @@ get_header(); ?>
     <h1>End</h1>
 		</main>
 	</div>	
+	
 </div><!-- .wrap -->
 
 <?php get_footer();
