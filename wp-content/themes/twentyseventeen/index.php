@@ -61,7 +61,40 @@ get_header(); ?>
 
 		</main><!-- #main -->
 	</div><!-- #primary -->
+	
 	<?php get_sidebar(); ?>
+
+	<div id="primary" class="content-area">
+		<main id="main" class="site-main" role="main">
+		<h1>Start</h1>
+	<div id="ajax-posts" class="row">
+        <?php
+            $postsPerPage = 2;
+            $args = array(
+                    'post_type' => 'post',
+                    'posts_per_page' => $postsPerPage
+                    
+            );
+
+            $loop = new WP_Query($args);
+  
+              while ($loop->have_posts()) : $loop->the_post();
+        ?>
+
+         <div class="small-12 large-4 columns">
+                <h1><?php the_title(); ?></h1>
+                <p><?php the_content(); ?></p>
+         </div>
+
+         <?php
+             endwhile;
+        wp_reset_postdata();
+         ?>
+    </div>
+    <div><input type="button" id="more_posts" value="Load More" /></div>
+    <h1>End</h1>
+		</main>
+	</div>	
 </div><!-- .wrap -->
 
 <?php get_footer();
