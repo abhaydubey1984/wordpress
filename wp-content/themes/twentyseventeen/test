@@ -1,0 +1,58 @@
+<?php
+	add_action('widgets_init','register_widget');
+	function register_widget(){
+		register_widget('prowp_widget');
+	}
+	class prowp_widget extends WP_Widget{
+		function prowp_widget(){
+			$option=array('classname'=>'custom_widget','description'=>"Example Custom Widget");
+			$this->WP_Widget('custom_widget_id','Bio Widget',$option);
+		}
+		function form($instance){
+			$default=array('title'=>'My Bio','name'=>'Demo','bio'=>'');
+			$instance=wp_parse_args((array)$instance,$default);
+			$title=$instance['title'];
+			$name=$instance['name'];
+			$bio=$instance['bio'];
+?>
+<p>
+	Title :<input type="text" name="<?php echo $this->get_field_name('title'); ?>" class="widefat" 
+	value="<?php echo esc_attr($title); ?>">
+
+</p>
+<p>
+	Name:
+	<input type="text" name="<?php echo $this->get_field_name('name'); ?>" class="widefat" 
+	value="<?php echo esc_attr($name); ?>">
+</p>
+<p>
+	Bio:
+	<textarea class="widefat" name="<?php echo $this->get_field_name('title'); ?>" >
+		<?php echo esc_textarea($bio); ?>
+	</textarea>
+</p>
+<?php
+		}
+		function update($new_instance,$old_instance)
+		{
+			$instance=$old_instance;
+			$instance['title']=sanitize_text_field($new_instance['title']);
+			$instance['name']=sanitize_text_field($new_instance['name']);
+			$instance['bio']=sanitize_text_field($new_instance['bio']);
+			return $instance;
+		}
+		function widget($args,$instance){
+			extract($args);
+			echo $before_widget;
+			$title=apply_filters('widget-title',$instance['title']);
+			$name=(empty($instance['name'])) ? '&nbsp' : $instance['name'];
+			$bio=(empty($instance['bio'])) ? '&nbsp' : $instance['bio'];
+			if(!empty($title)){
+				echo $before_title.esc_html($title).$after_title;
+			}
+			echo '<p> Name:'.esc_html($name).'</p>';
+			echo '<p> Bio:'.esc_html($bio).'</p>';
+			echo $after_widget;
+		}
+	}
+?>

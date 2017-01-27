@@ -55,6 +55,9 @@ function twentyseventeen_setup() {
 
 	add_image_size( 'twentyseventeen-thumbnail-avatar', 100, 100, true );
 
+	// Set the default content width.
+	$GLOBALS['content_width'] = 525;
+
 	// This theme uses wp_nav_menu() in two locations.
 	register_nav_menus( array(
 		'top'    => __( 'Top Menu', 'twentyseventeen' ),
@@ -103,24 +106,29 @@ function twentyseventeen_setup() {
  	 */
 	add_editor_style( array( 'assets/css/editor-style.css', twentyseventeen_fonts_url() ) );
 
-	add_theme_support( 'starter-content', array(
+	// Define and register starter content to showcase the theme on new sites.
+	$starter_content = array(
 		'widgets' => array(
+			// Place three core-defined widgets in the sidebar area.
 			'sidebar-1' => array(
 				'text_business_info',
 				'search',
 				'text_about',
 			),
 
+			// Add the core-defined business info widget to the footer 1 area.
 			'sidebar-2' => array(
 				'text_business_info',
 			),
 
+			// Put two core-defined widgets in the footer 2 area.
 			'sidebar-3' => array(
 				'text_about',
 				'search',
 			),
 		),
 
+		// Specify the core-defined pages to create and add custom thumbnails to some of them.
 		'posts' => array(
 			'home',
 			'about' => array(
@@ -137,10 +145,11 @@ function twentyseventeen_setup() {
 			),
 		),
 
+		// Create the custom image attachments used as post thumbnails for pages.
 		'attachments' => array(
 			'image-espresso' => array(
 				'post_title' => _x( 'Espresso', 'Theme starter content', 'twentyseventeen' ),
-				'file' => 'assets/images/espresso.jpg',
+				'file' => 'assets/images/espresso.jpg', // URL relative to the template directory.
 			),
 			'image-sandwich' => array(
 				'post_title' => _x( 'Sandwich', 'Theme starter content', 'twentyseventeen' ),
@@ -152,12 +161,14 @@ function twentyseventeen_setup() {
 			),
 		),
 
+		// Default to a static front page and assign the front and posts pages.
 		'options' => array(
 			'show_on_front' => 'page',
 			'page_on_front' => '{{home}}',
 			'page_for_posts' => '{{blog}}',
 		),
 
+		// Set the front page section theme mods to the IDs of the core-registered pages.
 		'theme_mods' => array(
 			'panel_1' => '{{homepage-section}}',
 			'panel_2' => '{{about}}',
@@ -165,16 +176,20 @@ function twentyseventeen_setup() {
 			'panel_4' => '{{contact}}',
 		),
 
+		// Set up nav menus for each of the two areas registered in the theme.
 		'nav_menus' => array(
+			// Assign a menu to the "top" location.
 			'top' => array(
 				'name' => __( 'Top Menu', 'twentyseventeen' ),
 				'items' => array(
-					'page_home',
+					'link_home', // Note that the core "home" page is actually a link in case a static front page is not used.
 					'page_about',
 					'page_blog',
 					'page_contact',
 				),
 			),
+
+			// Assign a menu to the "social" location.
 			'social' => array(
 				'name' => __( 'Social Links Menu', 'twentyseventeen' ),
 				'items' => array(
@@ -186,7 +201,18 @@ function twentyseventeen_setup() {
 				),
 			),
 		),
-	) );
+	);
+
+	/**
+	 * Filters Twenty Seventeen array of starter content.
+	 *
+	 * @since Twenty Seventeen 1.1
+	 *
+	 * @param array $starter_content Array of starter content.
+	 */
+	$starter_content = apply_filters( 'twentyseventeen_starter_content', $starter_content );
+
+	add_theme_support( 'starter-content', $starter_content );
 }
 add_action( 'after_setup_theme', 'twentyseventeen_setup' );
 
@@ -199,10 +225,23 @@ add_action( 'after_setup_theme', 'twentyseventeen_setup' );
  */
 function twentyseventeen_content_width() {
 
-	$content_width = 700;
+	$content_width = $GLOBALS['content_width'];
 
-	if ( twentyseventeen_is_frontpage() ) {
-		$content_width = 1120;
+	// Get layout.
+	$page_layout = get_theme_mod( 'page_layout' );
+
+	// Check if layout is one column.
+	if ( 'one-column' === $page_layout ) {
+		if ( twentyseventeen_is_frontpage() ) {
+			$content_width = 644;
+		} elseif ( is_page() ) {
+			$content_width = 740;
+		}
+	}
+
+	// Check if is single post and there is no sidebar.
+	if ( is_single() && ! is_active_sidebar( 'sidebar-1' ) ) {
+		$content_width = 740;
 	}
 
 	/**
@@ -214,7 +253,7 @@ function twentyseventeen_content_width() {
 	 */
 	$GLOBALS['content_width'] = apply_filters( 'twentyseventeen_content_width', $content_width );
 }
-add_action( 'after_setup_theme', 'twentyseventeen_content_width', 0 );
+add_action( 'template_redirect', 'twentyseventeen_content_width', 0 );
 
 /**
  * Register custom fonts.
@@ -525,3 +564,252 @@ require get_parent_theme_file_path( '/inc/customizer.php' );
  * SVG icons functions and filters.
  */
 require get_parent_theme_file_path( '/inc/icon-functions.php' );
+add_action("init","my_custom_post_type");
+function my_custom_post_type()
+{
+	register_post_type("product",array(
+		'labels'=>array('name'=>'Product'),
+		'public'=>true,
+		'has_archive'=>true,
+		'taxonomies'=> array('people')
+		));
+}
+add_action('init','custom_taxonomy');
+function custom_taxonomy()
+{
+	register_taxonomy('people','product',array('label'=>'People'));
+}
+add_action("init","my_custom_post_typee");
+function my_custom_post_typee()
+{
+	register_post_type("product1",array(
+		'labels'=>array('name'=>'Product1'),
+		'public'=>true,
+		'has_archive'=>true,
+		'taxonomies'=> array('people')
+		));
+}
+add_action("init","my_custom_post_typee1");
+function my_custom_post_typee1()
+{
+	register_post_type("movie",array(
+		'labels'=>array('name'=>'Movie'),
+		'public'=>true,
+		'has_archive'=>true,
+		
+		));
+}
+
+//Meta Box Example
+add_action( 'add_meta_boxes', 'prowp_meta_box_init' );
+function prowp_meta_box_init() {
+// create our custom meta box
+add_meta_box( 'prowp-meta', 'Product Information',
+'prowp_meta_box', 'product', 'side', 'default' );
+}
+function prowp_meta_box( $post, $box ) {
+// retrieve the custom meta box values
+$prowp_featured = get_post_meta( $post->ID, '_prowp_type', true );
+$prowp_price = get_post_meta( $post->ID, '_prowp_price', true );
+//nonce for security
+wp_nonce_field( plugin_basename( __FILE__ ), 'prowp_save_meta_box' );
+// custom meta box form elements
+echo '<p>Price: <input type="text" name="prowp_price"
+value="'.esc_attr( $prowp_price ).'" size="5" /></p>';
+echo '<p>Type:
+<select name="prowp_product_type" id="prowp_product_type">
+<option value="0" '
+.selected( $prowp_featured, 'normal', false ). '>Normal
+</option>
+<option value="special" '
+.selected( $prowp_featured, 'special', false ). '>Special
+</option>
+<option value="featured" '
+.selected( $prowp_featured, 'featured', false ). '>Featured
+</option>
+<option value="clearance" '
+.selected( $prowp_featured, 'clearance', false ). '>Clearance
+</option>
+</select></p>';
+}
+add_action('init','load_post_ajax');
+function load_post_ajax()
+{
+
+}
+function more_post_ajax(){
+    $ppp = (isset($_POST["ppp"])) ? $_POST["ppp"] : 2;
+    $page = (isset($_POST['pageNumber'])) ? $_POST['pageNumber'] : 0;
+    header("Content-Type: text/html");
+    $args = array(
+        'suppress_filters' => true,
+        'post_type' => 'post',
+        'posts_per_page' => $ppp,
+        'paged'    => $page,
+    );
+    $loop = new WP_Query($args);
+    $out = '';
+    if ($loop -> have_posts()) :  while ($loop -> have_posts()) : $loop -> the_post();
+        $out .= '<div class="small-12 large-4 columns">
+                <h1>'.get_the_title().'</h1>
+                <p>'.get_the_content().'</p>
+         </div>';
+    endwhile;
+    endif;
+    wp_reset_postdata();
+    die($out);
+}
+add_action('wp_ajax_nopriv_more_post_ajax', 'more_post_ajax');
+add_action('wp_ajax_more_post_ajax', 'more_post_ajax');
+?>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+		var ppp = 2; // Post per page
+		var pageNumber = 1;
+	function load_posts(){
+    pageNumber++;
+    var str = '&pageNumber=' + pageNumber + '&ppp=' + ppp + '&action=more_post_ajax';
+    jQuery.ajax({
+        type: "POST",
+        dataType: "html",
+        url: "<?php echo admin_url('admin-ajax.php')?>",
+        data: str,
+        success: function(data){
+            var $data = jQuery(data);
+            if($data.length	){
+                jQuery("#ajax-posts").append($data);
+                jQuery("#more_posts").attr("disabled",false);
+            } else{
+                jQuery("#more_posts").attr("disabled",true);
+            }
+        },
+        error : function(jqXHR, textStatus, errorThrown) {
+            $loader.html(jqXHR + " :: " + textStatus + " :: " + errorThrown);
+        }
+
+    });	
+    return false;
+}
+jQuery("#more_posts").on("click",function(){ // When btn is pressed.
+    jQuery("#more_posts").attr("disabled",true); // Disable the button, temp.
+    load_posts();
+});
+	});
+</script>
+<!-- New Meta Box-->
+<?php
+add_action( 'load-post.php', 'smashing_post_meta_boxes_setup' );
+add_action( 'load-post-new.php', 'smashing_post_meta_boxes_setup' );
+function smashing_add_post_meta_boxes() {
+  add_meta_box("postcustom", "price", "smashing_post_class_meta_box", "product1", "side", "high", null);
+  add_meta_box("postcustom", "color", "smashing_post_class_meta_box", "product1", "side", "high", null);
+
+
+}
+function smashing_post_class_meta_box($object,$box){
+	wp_nonce_field( basename( __FILE__ ), 'smashing_post_class_nonce' );
+	?>
+	<p>
+	<label for="smashing-post-class"><?php _e( "Add Price of Product :", 'example' ); ?></label>
+	<input class="widefat" type="text" name="smashing-post-class" id="smashing-post-class" value="<?php echo esc_attr( get_post_meta( $object->ID, 'price', true ) ); ?>"/>
+	</p>
+		<p>
+	<label for="smashing-post-class"><?php _e( "Add Color of Product :", 'example' ); ?></label>
+	<input class="widefat" type="text" name="color" id="color" value="<?php echo esc_attr( get_post_meta( $object->ID, 'color', true ) ); ?>"/>
+	</p>
+	<?php
+
+}
+	function smashing_post_meta_boxes_setup(){
+		add_action('add_meta_boxes','smashing_add_post_meta_boxes');
+		add_action( 'save_post', 'smashing_save_post_class_meta', 10, 2 );
+	}
+	function smashing_save_post_class_meta( $post_id, $post ) {
+		if ( !isset( $_POST['smashing_post_class_nonce'] ) || !wp_verify_nonce( $_POST['smashing_post_class_nonce'], basename( __FILE__ ) ) )
+    		return $post_id;
+    	$post_type = get_post_type_object( $post->post_type );
+    	 if ( !current_user_can( $post_type->cap->edit_post, $post_id ) )
+    	return $post_id;
+    	$new_meta_value = ( isset( $_POST['smashing-post-class'] ) ? sanitize_html_class( $_POST['smashing-post-class'] ) : '' );
+    	$meta_key = 'price';
+    	$meta_value = get_post_meta( $post_id, $meta_key, true );
+    	$new_meta_value1 = ( isset( $_POST['color'] ) ? sanitize_html_class( $_POST['color'] ) : '' );
+    	$meta_key1 = 'color';
+    	$meta_value = get_post_meta( $post_id, $meta_key1, true );
+    	if ( $new_meta_value && '' == $meta_value )
+    	{
+        add_post_meta( $post_id, $meta_key, $new_meta_value, true );
+    	add_post_meta( $post_id, $meta_key1, $new_meta_value1, true );
+    	}
+    	elseif ( $new_meta_value && $new_meta_value != $meta_value )
+    	{
+    	update_post_meta( $post_id, $meta_key, $new_meta_value );
+    	update_post_meta( $post_id, $meta_key1, $new_meta_value1 );
+    	}
+  		elseif ( '' == $new_meta_value && $meta_value )
+  		{
+    	delete_post_meta( $post_id, $meta_key, $meta_value );
+    	delete_post_meta( $post_id, $meta_key1, $meta_value1 );
+    	}
+
+	}
+?>
+
+<!-- Custom Widget -->
+<?php
+	add_action('widgets_init','register_custom_widget');
+	function register_custom_widget(){
+		register_widget('prowp_widget');
+	}
+	class prowp_widget extends WP_Widget{
+		function prowp_widget(){
+			$option=array('classname'=>'custom_widget','description'=>"Example Custom Widget");
+			$this->WP_Widget('custom_widget_id','Bio Widget',$option);
+		}
+		function form($instance){
+			$default=array('title'=>'My Bio','name'=>'Demo','bio'=>'');
+			$instance=wp_parse_args((array)$instance,$default);
+			$title=$instance['title'];
+			$name=$instance['name'];
+			$bio=$instance['bio'];
+?>
+<p>
+	Title :<input type="text" name="<?php echo $this->get_field_name('title'); ?>" class="widefat" 
+	value="<?php echo esc_attr($title); ?>">
+
+</p>
+<p>
+	Name:
+	<input type="text" name="<?php echo $this->get_field_name('name'); ?>" class="widefat" 
+	value="<?php echo esc_attr($name); ?>">
+</p>
+<p>
+	Bio:
+	<textarea class="widefat" name="<?php echo $this->get_field_name('bio'); ?>" ><?php echo esc_textarea($bio); ?></textarea>
+</p>
+<?php
+		}
+		function update($new_instance,$old_instance)
+		{
+			$instance=$old_instance;
+			$instance['title']=sanitize_text_field($new_instance['title']);
+			$instance['name']=sanitize_text_field($new_instance['name']);
+			$instance['bio']=sanitize_text_field($new_instance['bio']);
+			return $instance;
+		}
+		function widget($args,$instance){
+			extract($args);
+			echo $before_widget;
+			$title=apply_filters('widget-title',$instance['title']);
+			$name=(empty($instance['name'])) ? '&nbsp' : $instance['name'];
+			$bio=(empty($instance['bio'])) ? '&nbsp' : $instance['bio'];
+			if(!empty($title)){
+				echo $before_title.esc_html($title).$after_title;
+			}
+			echo '<p> Name : '.esc_html($name).'</p>';
+			echo '<p> Bio : '.esc_html($bio).'</p>';
+			echo $after_widget;
+		}
+	}
+?>
