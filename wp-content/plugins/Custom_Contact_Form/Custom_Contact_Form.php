@@ -5,7 +5,6 @@ Description: Contact Information.
 Version: 1.0
 Author: Pintu Soliya
 */
-
 register_activation_hook( __FILE__, 'create_contact' );
 function create_contact()
 {
@@ -24,5 +23,12 @@ function create_contact()
 	dbDelta( $sql );
 
 }
-
+register_deactivation_hook(__FILE__,'drop_contact');
+function drop_contact()
+{
+	global $wpdb;
+	$table_name = $wpdb->prefix . 'contact';
+	$sql = "DROP TABLE IF EXISTS $table_name;";
+	$wpdb->query($sql);
+}
 ?>
