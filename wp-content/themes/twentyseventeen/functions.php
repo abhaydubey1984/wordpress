@@ -571,7 +571,9 @@ function my_custom_post_type()
 		'labels'=>array('name'=>'Product'),
 		'public'=>true,
 		'has_archive'=>true,
-		'taxonomies'=> array('people')
+		'capability_type'=>'post',
+		 'publicly_queryable'  => true,	
+		'taxonomies'=> array('people','category')
 		));
 }
 add_action('init','custom_taxonomy');
@@ -586,7 +588,7 @@ function my_custom_post_typee()
 		'labels'=>array('name'=>'Product1'),
 		'public'=>true,
 		'has_archive'=>true,
-		'taxonomies'=> array('people')
+		'taxonomies'=> array('people','category')
 		));
 }
 add_action("init","my_custom_post_typee1");
@@ -596,7 +598,7 @@ function my_custom_post_typee1()
 		'labels'=>array('name'=>'Movie'),
 		'public'=>true,
 		'has_archive'=>true,
-		
+		'taxonomies'=> array('category')
 		));
 }
 
@@ -702,8 +704,8 @@ jQuery("#more_posts").on("click",function(){ // When btn is pressed.
 add_action( 'load-post.php', 'smashing_post_meta_boxes_setup' );
 add_action( 'load-post-new.php', 'smashing_post_meta_boxes_setup' );
 function smashing_add_post_meta_boxes() {
-  add_meta_box("postcustom", "price", "smashing_post_class_meta_box", "product1", "side", "high", null);
-  add_meta_box("postcustom", "color", "smashing_post_class_meta_box", "product1", "side", "high", null);
+
+  add_meta_box("postcustom", "Prduct Information", "smashing_post_class_meta_box", "product1", "side", "high", null);
 
 
 }
