@@ -16,54 +16,15 @@
  */
 
 get_header(); ?>
+<?php
+include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
+?>
 <div class="wrap">
-	<form method="post">
-	<input type="text" name="search_location" onsubmit="getdataa()" style="width:300px;" />
-	<input type="submit" name="submit_se"/>
-	</form>
 	<?php
-	if(isset($_REQUEST['submit_se']))
-	{
-		global $wpdb;
-		$d=$_REQUEST['search_location'];
-		$sqll=$wpdb->get_results("select country_code from wp_zip_code where zip=$d");
-		$ccode=$sqll[0]->country_code;
-		echo "Coutry Code for zip Code $d : ".$ccode;
-		$sql=$wpdb->get_results("select * from wp_locations where country_codes like '%$ccode%'");
-		$c=count($sql);	
-		echo "</br>";
-		if($c>0)
-		{
-		?>
-		<table>
-		<th>Franchise Name</th>
-		<th>phone</th>
-		<th>Website</th>
-		<th>Email</th>
-		<th>Country Codes</th>
-		<?php
-		foreach($sql as $dataa)
-		{
-		?>
-		<tr>
-			<td><?php echo $dataa->franchise_name; ?></td>
-			<td><?php echo $dataa->phone; ?></td>
-			<td><?php echo $dataa->website; ?></td>
-			<td><?php echo $dataa->email; ?></td>
-			<td><?php echo $dataa->country_codes; ?></td>
-		</tr>
-		<?php
-	    }
-	?>
-	</table>
-		<?php
-	}
-	else
-	{
-		echo "No data Found for country code $ccode";
-	}
-	}
+	if ( is_plugin_active( 'File_upload/File_upload.php' ) ) {
+	do_shortcode("[search_data]");
+}
 	?>
 	<?php if ( is_home() && ! is_front_page() ) : ?>
 		<header class="page-header">
