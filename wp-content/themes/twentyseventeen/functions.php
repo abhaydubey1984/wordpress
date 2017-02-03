@@ -814,4 +814,24 @@ function smashing_post_class_meta_box($object,$box){
 			echo $after_widget;
 		}
 	}
+	
+?>
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+		jQuery.ajax({
+			type:'POST',
+			uri: "<?php echo admin_url('admin-ajax.php')?>",
+			data:{'action':'myaction'},
+			success:function(data){
+				alert(data);
+			}
+		});
+	});
+</script>
+<?php
+add_action('wp_ajax_myaction','get_my_action');
+	function get_my_action()
+	{
+		echo "<script>alert('my action');</script>";
+	}
 ?>

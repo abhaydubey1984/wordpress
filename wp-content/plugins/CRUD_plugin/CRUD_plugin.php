@@ -85,7 +85,7 @@ function get_data_contact()
 			<td><?php echo $data->name; ?></td>
 			<td><?php echo $data->address; ?></td>
 			<td><?php echo $data->city; ?></td>
-			<td><?php echo $data->phone; ?></td>	
+			<td><?php echo $data->phone; ?></td>
 		</tr>
 		<?php
 	}
