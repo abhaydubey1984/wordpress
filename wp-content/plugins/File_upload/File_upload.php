@@ -108,4 +108,63 @@ function main_plugin_page()
 		}
 	}
 }
+
+add_shortcode('search_data','search_data_function');
+function search_data_function() {
+	?>
+<form method="post">
+	<input type="text" name="search_location" style="width:300px;" placeholder="Enter Zip Code" />
+	<input type="submit" name="submit_se" style="margin-top: 4px;" value="Search" />
+	</form>
+	<?php
+	if(isset($_REQUEST['submit_se']))
+	{
+		global $wpdb;
+		$d=$_REQUEST['search_location'];
+		$sqll=$wpdb->get_results("select country_code from wp_zip_code where zip=$d");
+		$ccode=$sqll[0]->country_code;
+		$cc=count($sqll);
+		if($cc>0)
+		{
+		echo "Coutry Code for zip Code $d : ".$ccode;
+		$sql=$wpdb->get_results("select * from wp_locations where country_codes like '%$ccode%'");
+		$c=count($sql);	
+		echo "</br>";
+		if($c>0)
+		{
+		?>
+		<table>
+		<th>Franchise Name</th>
+		<th>phone</th>
+		<th>Website</th>
+		<th>Email</th>
+		<th>Country Codes</th>
+		<?php
+		foreach($sql as $dataa)
+		{
+		?>
+		<tr>
+			<td><?php echo $dataa->franchise_name; ?></td>
+			<td><?php echo $dataa->phone; ?></td>
+			<td><?php echo $dataa->website; ?></td>
+			<td><?php echo $dataa->email; ?></td>
+			<td><?php echo $dataa->country_codes; ?></td>
+		</tr>
+		<?php
+	    }
+	?>
+	</table>
+		<?php
+	}
+}
+	else
+	{
+		echo "No data Found for country code $ccode";
+	}
+	}
+}
+include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+if ( is_plugin_active( 'File_upload/File_upload.php' ) ) {
+	do_shortcode("[search_data]");
+}
 ?>
