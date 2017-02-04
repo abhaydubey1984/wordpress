@@ -120,8 +120,10 @@ function main_plugin_page()
 
 add_shortcode('search_data','search_data_function');
 function search_data_function() {
+	//ob_start();
 	?>
-<form method="post">
+	<div id="ss">
+    <form method="post">
 	<input type="text" name="search_location" style="width:300px;" placeholder="Enter Zip Code" />
 	<input type="submit" name="submit_se" style="margin-top: 4px;" value="Search" />
 	</form>
@@ -171,19 +173,15 @@ function search_data_function() {
 		echo "No data Found for country code $ccode";
 	}
 	}
+	?>
+	</div>
+	<?php
+	//return ob_get_clean();
 }
 
-add_action('wp_head','search_data',2);
-add_action('after_body', 'search_data');
+add_action('wp_head','search_data');
 function search_data()
 {
-	if(is_home())
-	{
-	    do_shortcode("[search_data]");
-	}
-	else
-	{
-	    do_shortcode("[search_data]");
-	}
+	do_shortcode("[search_data]");
 }
 ?>
