@@ -17,14 +17,13 @@
 
 get_header(); ?>
 <?php
-include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-
+//include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 ?>
-<div class="wrap">
+<div class="wrap" id="main_content">
 	<?php
-	if ( is_plugin_active( 'File_upload/File_upload.php' ) ) {
-	do_shortcode("[search_data]");
-}
+	//if ( is_plugin_active( 'File_upload/File_upload.php' ) ) {
+	//do_shortcode("[search_data]");
+//}
 	?>
 	<?php if ( is_home() && ! is_front_page() ) : ?>
 		<header class="page-header">

@@ -92,8 +92,17 @@ function main_plugin_page()
 			$csvFile = fopen($_FILES['zip']['tmp_name'], 'r');
 			fgetcsv($csvFile);
 			while(($line = fgetcsv($csvFile)) !== FALSE){
-			 	$wpdb->query("insert into wp_zip_code(zip,country_code,city,state,country) values($line[0],$line[1],'$line[2]','$line[3]','$line[4]')");
-			 }
+				 $getdata=$wpdb->query("select zip from wp_zip_code where zip=$line[0]");
+				 if($getdata > 0) {
+					$wpdb->query("update wp_zip_code set country_code=$line[1],city='$line[2]',state='$line[3]',country='$line[4]' where zip=$line[0]");
+				}
+				else
+				{
+						$wpdb->query("insert into wp_zip_code(zip,country_code,city,state,country) values($line[0],$line[1],'$line[2]','$line[3]','$line[4]')");
+				}
+			}
+			 	
+		}
 			  fclose($csvFile);
 		}
 		if(is_uploaded_file($_FILES['location']['tmp_name']))
@@ -106,7 +115,7 @@ function main_plugin_page()
 			 }
 			  fclose($csvFile);
 		}
-	}
+	
 }
 
 add_shortcode('search_data','search_data_function');
@@ -163,8 +172,18 @@ function search_data_function() {
 	}
 	}
 }
-include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-if ( is_plugin_active( 'File_upload/File_upload.php' ) ) {
-	do_shortcode("[search_data]");
+
+add_action('wp_head','search_data',2);
+add_action('after_body', 'search_data');
+function search_data()
+{
+	if(is_home())
+	{
+	    do_shortcode("[search_data]");
+	}
+	else
+	{
+	    do_shortcode("[search_data]");
+	}
 }
 ?>
