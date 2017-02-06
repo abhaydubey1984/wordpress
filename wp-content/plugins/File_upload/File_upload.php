@@ -92,8 +92,17 @@ function main_plugin_page()
 			$csvFile = fopen($_FILES['zip']['tmp_name'], 'r');
 			fgetcsv($csvFile);
 			while(($line = fgetcsv($csvFile)) !== FALSE){
-			 	$wpdb->query("insert into wp_zip_code(zip,country_code,city,state,country) values($line[0],$line[1],'$line[2]','$line[3]','$line[4]')");
-			 }
+				 $getdata=$wpdb->query("select zip from wp_zip_code where zip=$line[0]");
+				 if($getdata > 0) {
+					$wpdb->query("update wp_zip_code set country_code=$line[1],city='$line[2]',state='$line[3]',country='$line[4]' where zip=$line[0]");
+				}
+				else
+				{
+						$wpdb->query("insert into wp_zip_code(zip,country_code,city,state,country) values($line[0],$line[1],'$line[2]','$line[3]','$line[4]')");
+				}
+			}
+			 	
+		}
 			  fclose($csvFile);
 		}
 		if(is_uploaded_file($_FILES['location']['tmp_name']))
@@ -106,13 +115,15 @@ function main_plugin_page()
 			 }
 			  fclose($csvFile);
 		}
-	}
+	
 }
 
 add_shortcode('search_data','search_data_function');
 function search_data_function() {
+	//ob_start();
 	?>
-<form method="post">
+	<div id="ss">
+    <form method="post">
 	<input type="text" name="search_location" style="width:300px;" placeholder="Enter Zip Code" />
 	<input type="submit" name="submit_se" style="margin-top: 4px;" value="Search" />
 	</form>
@@ -162,9 +173,15 @@ function search_data_function() {
 		echo "No data Found for country code $ccode";
 	}
 	}
+	?>
+	</div>
+	<?php
+	//return ob_get_clean();
 }
-include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-if ( is_plugin_active( 'File_upload/File_upload.php' ) ) {
+
+add_action('wp_head','search_data');
+function search_data()
+{
 	do_shortcode("[search_data]");
 }
 ?>
